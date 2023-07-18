@@ -1,0 +1,107 @@
+<html>
+  <head>
+    <style>
+      #gameContainer {
+        position: relative;
+        width: 500px;
+        height: 400px;
+        border: 1px solid black;
+        overflow: hidden;
+      }
+
+      #spaceship {
+        position: absolute;
+        top: 180px;
+        left: 40px;
+        width: 60px;
+        height: 60px;
+        background-color: blue;
+      }
+
+      .asteroid {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        background-color: gray;
+      }
+
+      .power-up {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        background-color: yellow;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Space Adventure Game</h1>
+    <div id="gameContainer">
+      <div id="spaceship"></div>
+    </div>
+    <script>
+      var spaceship = document.getElementById('spaceship');
+      var gameContainer = document.getElementById('gameContainer');
+      var score = 0;
+
+      // Move the spaceship
+      document.addEventListener('keydown', function(event) {
+        var key = event.key;
+        if (key === 'ArrowUp') {
+          spaceship.style.top = (parseInt(spaceship.style.top) - 10) + 'px';
+        } else if (key === 'ArrowDown') {
+          spaceship.style.top = (parseInt(spaceship.style.top) + 10) + 'px';
+        } else if (key === 'ArrowLeft') {
+          spaceship.style.left = (parseInt(spaceship.style.left) - 10) + 'px';
+        } else if (key === 'ArrowRight') {
+          spaceship.style.left = (parseInt(spaceship.style.left) + 10) + 'px';
+        }
+      });
+
+      // Generate asteroids and power-ups at regular intervals
+      setInterval(function() {
+        var asteroid = document.createElement('div');
+        asteroid.className = 'asteroid';
+        asteroid.style.top = Math.random() * 360 + 'px';
+        asteroid.style.left = '500px';
+        gameContainer.appendChild(asteroid);
+
+        var powerUp = document.createElement('div');
+        powerUp.className = 'power-up';
+        powerUp.style.top = Math.random() * 360 + 'px';
+        powerUp.style.left = '500px';
+        gameContainer.appendChild(powerUp);
+
+        // Move asteroids and power-ups
+        var moveInterval = setInterval(function() {
+          var asteroidLeft = parseInt(asteroid.style.left);
+          var powerUpLeft = parseInt(powerUp.style.left);
+          asteroid.style.left = (asteroidLeft - 5) + 'px';
+          powerUp.style.left = (powerUpLeft - 5) + 'px';
+
+          // Check for collisions
+          if (
+            asteroidLeft < 100 &&
+            asteroidLeft > 0 &&
+            Math.abs(parseInt(spaceship.style.top) - parseInt(asteroid.style.top)) < 60
+          ) {
+            clearInterval(moveInterval);
+            asteroid.remove();
+            score--;
+            console.log('Collision! Score:', score);
+          }
+
+          if (
+            powerUpLeft < 100 &&
+            powerUpLeft > 0 &&
+            Math.abs(parseInt(spaceship.style.top) - parseInt(powerUp.style.top)) < 60
+          ) {
+            clearInterval(moveInterval);
+            powerUp.remove();
+            score++;
+            console.log('Power-up collected! Score:', score);
+          }
+        }, 30);
+      }, 2000);
+    </script>
+  </body>
+</html>
